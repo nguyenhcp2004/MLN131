@@ -367,10 +367,30 @@ export default function Home() {
         <Poll
           question="Theo bạn, thời kỳ nào tôn trọng quyền con người nhất?"
           options={[
-            { id: "nosle", label: "Chiếm hữu nô lệ", votes: 12 },
-            { id: "phongkien", label: "Phong kiến", votes: 24 },
-            { id: "tuban", label: "Tư bản", votes: 189 },
-            { id: "xhcn", label: "Xã hội chủ nghĩa", votes: 342 },
+            {
+              id: "nosle",
+              label: "Chiếm hữu nô lệ",
+              votes: 12,
+              breakdown: { students: 2, workers: 4, officials: 6 },
+            },
+            {
+              id: "phongkien",
+              label: "Phong kiến",
+              votes: 24,
+              breakdown: { students: 8, workers: 10, officials: 6 },
+            },
+            {
+              id: "tuban",
+              label: "Tư bản",
+              votes: 189,
+              breakdown: { students: 78, workers: 82, officials: 29 },
+            },
+            {
+              id: "xhcn",
+              label: "Xã hội chủ nghĩa",
+              votes: 342,
+              breakdown: { students: 145, workers: 132, officials: 65 },
+            },
           ]}
           sectionId="timeline"
         />
@@ -389,8 +409,18 @@ export default function Home() {
         <Poll
           question="Quan điểm nào bạn đồng tình hơn về quyền con người?"
           options={[
-            { id: "ca_nhan", label: "Cá nhân là tối thượng (Phương Tây)", votes: 156 },
-            { id: "cong_dong", label: "Cân bằng với cộng đồng (Việt Nam)", votes: 298 },
+            {
+              id: "ca_nhan",
+              label: "Cá nhân là tối thượng (Phương Tây)",
+              votes: 156,
+              breakdown: { students: 48, workers: 52, officials: 56 },
+            },
+            {
+              id: "cong_dong",
+              label: "Cân bằng với cộng đồng (Việt Nam)",
+              votes: 298,
+              breakdown: { students: 112, workers: 98, officials: 88 },
+            },
           ]}
           sectionId="comparison"
         />
@@ -406,9 +436,9 @@ export default function Home() {
         <Poll
           question="Bạn đã bao giờ sử dụng quyền giám sát của mình chưa?"
           options={[
-            { id: "chua", label: "Chưa bao giờ", votes: 234 },
-            { id: "da", label: "Đã từng 1-2 lần", votes: 145 },
-            { id: "thuong_xuyen", label: "Thường xuyên", votes: 67 },
+            { id: "chua", label: "Chưa bao giờ", votes: 234, breakdown: { students: 98, workers: 87, officials: 49 } },
+            { id: "da", label: "Đã từng 1-2 lần", votes: 145, breakdown: { students: 62, workers: 54, officials: 29 } },
+            { id: "thuong_xuyen", label: "Thường xuyên", votes: 67, breakdown: { students: 25, workers: 28, officials: 14 } },
           ]}
           sectionId="practice"
         />
@@ -424,9 +454,9 @@ export default function Home() {
         <Poll
           question="Bạn có sẵn sàng báo cáo hành vi tham nhũng nếu phát hiện không?"
           options={[
-            { id: "co", label: "Có, ngay lập tức", votes: 289 },
-            { id: "canthan", label: "Cần cân nhắc", votes: 134 },
-            { id: "khong", label: "Không, sợ liên quan", votes: 45 },
+            { id: "co", label: "Có, ngay lập tức", votes: 289, breakdown: { students: 125, workers: 112, officials: 52 } },
+            { id: "canthan", label: "Cần cân nhắc", votes: 134, breakdown: { students: 48, workers: 52, officials: 34 } },
+            { id: "khong", label: "Không, sợ liên quan", votes: 45, breakdown: { students: 12, workers: 5, officials: 28 } },
           ]}
           sectionId="action"
         />

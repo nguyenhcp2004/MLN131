@@ -1,12 +1,18 @@
 "use client";
 
 import { memo, useState, useCallback } from "react";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, Users, Eye, EyeOff } from "lucide-react";
+import { usePersona } from "@/contexts/persona-context";
 
 interface PollOption {
   id: string;
   label: string;
   votes: number;
+  breakdown?: {
+    students: number;
+    workers: number;
+    officials: number;
+  };
 }
 
 interface PollProps {
@@ -16,9 +22,11 @@ interface PollProps {
 }
 
 export const Poll = memo(function Poll({ question, options: initialOptions, sectionId }: PollProps) {
+  const { persona } = usePersona();
   const [options, setOptions] = useState<PollOption[]>(initialOptions);
   const [hasVoted, setHasVoted] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   const totalVotes = options.reduce((sum, opt) => sum + opt.votes, 0);
 
@@ -27,21 +35,34 @@ export const Poll = memo(function Poll({ question, options: initialOptions, sect
       if (!hasVoted) {
         setOptions((prev) =>
           prev.map((opt) =>
-            opt.id === optionId ? { ...opt, votes: opt.votes + 1 } : opt
+            opt.id === optionId
+              ? { ...opt, votes: opt.votes + 1, breakdown: { ...opt.breakdown, students: (opt.breakdown?.students || 0) + (persona?.position?.includes("Sinh viên") ? 1 : 0), workers: (opt.breakdown?.workers || 0) + (persona?.position?.includes("Công nhân") ? 1 : 0), officials: (opt.breakdown?.officials || 0) + (persona?.position?.includes("Cán bộ") ? 1 : 0) } }
+              : opt
           )
         );
         setHasVoted(true);
         setSelectedOption(optionId);
       }
     },
-    [hasVoted]
+    [hasVoted, persona]
   );
 
   return (
     <div className="glass-card p-6 rounded-2xl mt-8">
-      <div className="flex items-center gap-2 mb-4">
-        <BarChart3 className="h-5 w-5 text-accent" />
-        <h3 className="font-bold text-lg">Thăm dò ý kiến</h3>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <BarChart3 className="h-5 w-5 text-accent" />
+          <h3 className="font-bold text-lg">Thăm dò ý kiến</h3>
+        </div>
+        {hasVoted && (
+          <button
+            onClick={() => setShowBreakdown(!showBreakdown)}
+            className="text-sm text-primary hover:text-accent flex items-center gap-1 transition-colors"
+          >
+            {showBreakdown ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showBreakdown ? "Ẩn" : "Mở"} theo nhóm
+          </button>
+        )}
       </div>
       <p className="text-sm font-semibold mb-4">{question}</p>
 
@@ -76,15 +97,55 @@ export const Poll = memo(function Poll({ question, options: initialOptions, sect
                   </div>
                 )}
               </button>
+
+              {/* Persona Breakdown */}
+              {hasVoted && showBreakdown && option.breakdown && (
+                <div className="mt-2 pl-6 space-y-1 animate-fade-up">
+                  <p className="text-xs text-muted-foreground font-semibold mb-2">
+                    Phân tích theo nhóm:
+                  </p>
+                  {[
+                    { label: "Học sinh/Sinh viên", value: option.breakdown.students, percentage: option.breakdown.students / option.votes * 100, color: "bg-blue-500" },
+                    { label: "Công nhân/Nhân viên", value: option.breakdown.workers, percentage: option.breakdown.workers / option.votes * 100, color: "bg-teal-500" },
+                    { label: "Cán bộ/Công chức", value: option.breakdown.officials, percentage: option.breakdown.officials / option.votes * 100, color: "bg-purple-500" },
+                  ]
+                    .filter((g) => g.value > 0)
+                    .map((group) => (
+                      <div key={group.label} className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${group.color}`} />
+                        <span className="text-xs flex-1">{group.label}: {group.value} phiếu ({group.percentage.toFixed(0)}%)</span>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
       {hasVoted && (
-        <p className="text-xs text-muted-foreground mt-3 text-center">
-          Tổng số phiếu: {totalVotes}
-        </p>
+        <div className="mt-4 pt-4 border-t border-border">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs text-muted-foreground">Tổng số phiếu: {totalVotes}</p>
+            {!showBreakdown && (
+              <button
+                onClick={() => setShowBreakdown(true)}
+                className="text-xs text-primary hover:underline flex items-center gap-1"
+              >
+                <Users className="h-3 w-3" />
+                Xem phân tích theo nhóm
+              </button>
+            )}
+          </div>
+
+          {/* Personalized Message */}
+          {persona && (
+            <p className="text-xs text-muted-foreground text-center mt-2">
+              <span className="font-semibold text-primary">{persona.position}</span> đã bỏ {selectedOption ? options.find((o) => o.id === selectedOption)?.label : ""}
+              .  Bạn có muốn thay đổi lựa chọn không?
+            </p>
+          )}
+        </div>
       )}
     </div>
   );

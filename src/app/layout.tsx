@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Noto_Sans } from "next/font/google";
 import "./globals.css";
+import { PersonaProvider } from "@/contexts/persona-context";
 
 const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-be-vietnam-pro",
@@ -31,7 +32,7 @@ export default function RootLayout({
       <body
         className={`${beVietnamPro.variable} ${notoSans.variable} antialiased font-sans`}
       >
-        {children}
+        <PersonaProvider>{children}</PersonaProvider>
       </body>
     </html>
   );

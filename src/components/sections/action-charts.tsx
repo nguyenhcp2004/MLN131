@@ -2,6 +2,7 @@
 
 import { memo, useState, useEffect } from "react";
 import { TrendingUp, DollarSign, Scale, Users, ArrowRight, GraduationCap, Heart } from "lucide-react";
+import { TimelineScrubber } from "@/components/ui/timeline-scrubber";
 
 interface ChartData {
   label: string;
@@ -80,32 +81,20 @@ export const ActionChartsSection = memo(function ActionChartsSection() {
           </div>
         </div>
 
+        {/* Interactive Timeline Scrubber */}
+        <div className="mb-12">
+          <TimelineScrubber
+            data={[
+              { year: 2021, cases: 65, recovered: 8.5, label: "Bắt đầu chiến dịch", color: "text-red-500" },
+              { year: 2022, cases: 78, recovered: 10.8, label: "Mở rộng phạm vi", color: "text-orange-500" },
+              { year: 2023, cases: 92, recovered: 12.6, label: "Tăng cường thanh tra", color: "text-amber-500" },
+              { year: 2024, cases: 108, recovered: 15.8, label: "Kỷ lục thành tích", color: "text-green-500" },
+            ]}
+          />
+        </div>
+
         {/* Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Cases Bar Chart */}
-          <div className="glass-card p-6 rounded-2xl">
-            <h3 className="text-xl font-heading font-bold mb-6 flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-red-500" />
-              Số vụ xử lý qua các năm
-            </h3>
-            <div className="space-y-4">
-              {corruptionData.map((item, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">{item.label}</span>
-                    <span className="font-bold text-primary">{item.value} vụ</span>
-                  </div>
-                  <div className="w-full bg-secondary rounded-full h-3 overflow-hidden">
-                    <div
-                      className={`h-full ${item.color} transition-all duration-1000 ease-out`}
-                      style={{ width: animated ? `${(item.value / maxValue) * 100}%` : "0%" }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Assets Donut Chart */}
           <div className="glass-card p-6 rounded-2xl">
             <h3 className="text-xl font-heading font-bold mb-6 flex items-center gap-2">

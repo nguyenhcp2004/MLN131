@@ -1,7 +1,8 @@
 "use client";
 
-import { Scale, Users, ChevronDown } from "lucide-react";
+import { Scale, Users, ChevronDown, SlidersHorizontal } from "lucide-react";
 import { memo, useState, useCallback } from "react";
+import { SliderComparison } from "@/components/ui/slider-comparison";
 
 interface Criterion {
   label: string;
@@ -198,6 +199,7 @@ export const ComparisonSection = memo(function ComparisonSection({
 }: ComparisonSectionProps) {
   const [selectedRight, setSelectedRight] = useState<string>("speech");
   const [isOpen, setIsOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"dropdown" | "slider">("dropdown");
 
   const currentComparison = comparisons[selectedRight];
 
@@ -212,7 +214,7 @@ export const ComparisonSection = memo(function ComparisonSection({
     <section className="py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-4">
             <Scale className="h-4 w-4" />
             Phần 2
@@ -220,14 +222,38 @@ export const ComparisonSection = memo(function ComparisonSection({
           <h2 className="text-3xl sm:text-5xl font-heading font-bold mb-4">
             Lăng kính Nhân quyền
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
             So sánh quan niệm về nhân quyền giữa Phương Tây và Việt Nam.
-            <br />
-            <span className="text-primary font-semibold">Chọn quyền để xem chi tiết!</span>
           </p>
         </div>
 
-        {/* Rights Selector Dropdown */}
+        {/* View Mode Toggle */}
+        <div className="flex justify-center gap-4 mb-12">
+          <button
+            onClick={() => setViewMode("dropdown")}
+            className={`px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
+              viewMode === "dropdown"
+                ? "bg-primary text-primary-foreground shadow-lg"
+                : "bg-card border-2 border-border hover:border-primary"
+            }`}
+          >
+            <ChevronDown className="h-5 w-5" />
+            Chọn quyền để xem
+          </button>
+          <button
+            onClick={() => setViewMode("slider")}
+            className={`px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
+              viewMode === "slider"
+                ? "bg-primary text-primary-foreground shadow-lg"
+                : "bg-card border-2 border-border hover:border-primary"
+            }`}
+          >
+            <SlidersHorizontal className="h-5 w-5" />
+            Thanh trượt so sánh
+          </button>
+        </div>
+
+        {/* Rights Selector Dropdown - Available for both views */}
         <div className="max-w-md mx-auto mb-12">
           <div className="relative">
             <button
@@ -262,74 +288,84 @@ export const ComparisonSection = memo(function ComparisonSection({
           </div>
         </div>
 
-        <div className="relative">
-          {/* Center Divider */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-accent to-primary -translate-x-1/2 z-10" />
+        {/* Dropdown View */}
+        {viewMode === "dropdown" && (
+          <>
+            <div className="relative">
+              {/* Center Divider */}
+              <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-accent to-primary -translate-x-1/2 z-10" />
 
-          {/* Two Column Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Western Perspective */}
-            <div className="space-y-4 pr-4">
-              <div className="glass-card p-6 rounded-2xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                    <Users className="h-6 w-6 text-blue-500" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-heading font-bold">{currentComparison.western.title}</h3>
-                    <p className="text-sm text-muted-foreground">{currentComparison.western.perspective}</p>
+              {/* Two Column Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Western Perspective */}
+                <div className="space-y-4 pr-4">
+                  <div className="glass-card p-6 rounded-2xl">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                        <Users className="h-6 w-6 text-blue-500" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-heading font-bold">{currentComparison.western.title}</h3>
+                        <p className="text-sm text-muted-foreground">{currentComparison.western.perspective}</p>
+                      </div>
+                    </div>
+
+                    {currentComparison.western.criteria.map((criterion, index) => (
+                      <div
+                        key={index}
+                        className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-xl mb-3"
+                      >
+                        <div className="font-semibold text-blue-700 dark:text-blue-400 mb-2">
+                          {criterion.label}
+                        </div>
+                        <p className="text-sm text-muted-foreground">{criterion.content}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {currentComparison.western.criteria.map((criterion, index) => (
-                  <div
-                    key={index}
-                    className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-xl mb-3"
-                  >
-                    <div className="font-semibold text-blue-700 dark:text-blue-400 mb-2">
-                      {criterion.label}
+                {/* Vietnam Perspective */}
+                <div className="space-y-4 pl-4">
+                  <div className="glass-card p-6 rounded-2xl">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-12 h-12 rounded-full bg-teal-500/10 flex items-center justify-center">
+                        <Users className="h-6 w-6 text-teal-500" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-heading font-bold">{currentComparison.vietnam.title}</h3>
+                        <p className="text-sm text-muted-foreground">{currentComparison.vietnam.perspective}</p>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">{criterion.content}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Vietnam Perspective */}
-            <div className="space-y-4 pl-4">
-              <div className="glass-card p-6 rounded-2xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-teal-500/10 flex items-center justify-center">
-                    <Users className="h-6 w-6 text-teal-500" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-heading font-bold">{currentComparison.vietnam.title}</h3>
-                    <p className="text-sm text-muted-foreground">{currentComparison.vietnam.perspective}</p>
+                    {currentComparison.vietnam.criteria.map((criterion, index) => (
+                      <div
+                        key={index}
+                        className="bg-teal-50 dark:bg-teal-950/20 p-4 rounded-xl mb-3"
+                      >
+                        <div className="font-semibold text-teal-700 dark:text-teal-400 mb-2">
+                          {criterion.label}
+                        </div>
+                        <p className="text-sm text-muted-foreground">{criterion.content}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
+              </div>
 
-                {currentComparison.vietnam.criteria.map((criterion, index) => (
-                  <div
-                    key={index}
-                    className="bg-teal-50 dark:bg-teal-950/20 p-4 rounded-xl mb-3"
-                  >
-                    <div className="font-semibold text-teal-700 dark:text-teal-400 mb-2">
-                      {criterion.label}
-                    </div>
-                    <p className="text-sm text-muted-foreground">{criterion.content}</p>
-                  </div>
-                ))}
+              {/* Center Label */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:block">
+                <div className="bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-lg border-2 border-primary">
+                  <span className="text-sm font-bold text-primary">SO SÁNH</span>
+                </div>
               </div>
             </div>
-          </div>
+          </>
+        )}
 
-          {/* Center Label */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:block">
-            <div className="bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-lg border-2 border-primary">
-              <span className="text-sm font-bold text-primary">SO SÁNH</span>
-            </div>
-          </div>
-        </div>
+        {/* Slider View */}
+        {viewMode === "slider" && (
+          <SliderComparison western={currentComparison.western} vietnam={currentComparison.vietnam} />
+        )}
       </div>
     </section>
   );

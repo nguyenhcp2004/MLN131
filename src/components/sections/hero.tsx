@@ -2,6 +2,8 @@
 
 import { Target, Award, ChevronRight } from "lucide-react";
 import { memo } from "react";
+import { usePersona } from "@/contexts/persona-context";
+import { PersonaSelection } from "@/components/sections/persona-selection";
 
 interface HeroSectionProps {
   onStartJourney: () => void;
@@ -12,18 +14,29 @@ export const HeroSection = memo(function HeroSection({
   onStartJourney,
   onStartQuiz,
 }: HeroSectionProps) {
-  const stats = [
-    { value: "4", label: "Giai đoạn lịch sử", color: "text-primary" },
-    { value: "3", label: "Lĩnh vực thực tiễn", color: "text-accent" },
-    { value: "3", label: "Tình huống thử thách", color: "text-primary" },
-    { value: "∞", label: "Kiến thức nhân quyền", color: "text-accent" },
-  ];
+  const { hasPersona, persona } = usePersona();
 
+  // If user hasn't selected persona, show persona selection
+  if (!hasPersona) {
+    return (
+      <section className="min-h-screen flex items-center justify-center pt-20 px-4 relative overflow-hidden">
+        {/* Background effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        </div>
+
+        <div className="relative z-10">
+          <PersonaSelection onStart={onStartJourney} />
+        </div>
+      </section>
+    );
+  }
+
+  // Show main hero with personalized message
   return (
-    <section
-      id="hero"
-      className="min-h-screen flex items-center justify-center pt-20 px-4 relative overflow-hidden"
-    >
+    <section className="min-h-screen flex items-center justify-center pt-20 px-4 relative overflow-hidden">
       {/* Background effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
       <div className="absolute inset-0">
@@ -36,19 +49,23 @@ export const HeroSection = memo(function HeroSection({
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
             <Target className="h-4 w-4" />
-            Khám phá hành trình lịch sử
+            Xin chào, {persona?.position}
           </div>
 
-          {/* Main heading */}
+          {/* Personalized heading */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-heading font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent leading-tight">
             Bạn hiểu gì về<br />
             quyền con người?
           </h1>
 
-          {/* Subtitle */}
+          {/* Personalized subtitle */}
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            Hành trình từ những khái niệm đầu tiên đến thực tiễn bảo đảm nhân quyền
-            trong tiến trình xây dựng Chủ nghĩa xã hội.
+            Hành trình từ những khái niệm đầu tiên đến thực tiễn bảo đảm nhân quyền trong tiến trình
+            xây dựng Chủ nghĩa xã hội.
+            <br />
+            <span className="text-primary font-semibold">
+              Trải nghiệm được cá nhân hóa cho {persona?.age}
+            </span>
           </p>
 
           {/* CTA Buttons */}
@@ -72,14 +89,22 @@ export const HeroSection = memo(function HeroSection({
 
         {/* Stats Grid */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 animate-scale-in">
-          {stats.map((stat, index) => (
-            <div key={index} className="glass-card p-4 rounded-xl">
-              <div className={`text-3xl font-heading font-bold ${stat.color}`}>
-                {stat.value}
-              </div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
-            </div>
-          ))}
+          <div className="glass-card p-4 rounded-xl">
+            <div className="text-3xl font-heading font-bold text-primary">4</div>
+            <div className="text-sm text-muted-foreground">Giai đoạn lịch sử</div>
+          </div>
+          <div className="glass-card p-4 rounded-xl">
+            <div className="text-3xl font-heading font-bold text-accent">3</div>
+            <div className="text-sm text-muted-foreground">Lĩnh vực thực tiễn</div>
+          </div>
+          <div className="glass-card p-4 rounded-xl">
+            <div className="text-3xl font-heading font-bold text-primary">3</div>
+            <div className="text-sm text-muted-foreground">Tình huống thử thách</div>
+          </div>
+          <div className="glass-card p-4 rounded-xl">
+            <div className="text-3xl font-heading font-bold text-accent">∞</div>
+            <div className="text-sm text-muted-foreground">Kiến thức nhân quyền</div>
+          </div>
         </div>
       </div>
     </section>
